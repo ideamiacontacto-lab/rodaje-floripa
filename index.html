@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Rodaje Florianópolis</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: phone-first field tool. Sticky header with day strip, one view at a time, big tick boxes. Ideamia black + yellow. */
+:root{
+  --bg:#FFFFFF; --ink:#0B0B0A; --muted:#6B6A63; --line:#E6E5DF; --panel:#F3F3EF;
+  --y:#F9E92D; --on-y:#0B0B0A; --f:#0B0B0A; --on-f:#F9E92D; --h:#2B5FE8; --on-h:#FFFFFF;
+  --done:#1E8E4E; --foto:#C2185B;
+  --display:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D0D0C; --ink:#F2F2EE; --muted:#9C9B93; --line:#2A2A27; --panel:#181816;
+  --f:#F9E92D; --on-f:#0B0B0A; --h:#6F98FF; --on-h:#0B0B0A; --done:#4CC983; --foto:#FF6FA8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D0D0C; --ink:#F2F2EE; --muted:#9C9B93; --line:#2A2A27; --panel:#181816;
+  --f:#F9E92D; --on-f:#0B0B0A; --h:#6F98FF; --on-h:#0B0B0A; --done:#4CC983; --foto:#FF6FA8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--h);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:12px;padding-block:12px 8px}
+.top svg{height:38px;width:auto;flex:0 0 auto}
+.top .ttl{min-width:0}
+.top .ttl b{display:block;font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;line-height:1.1}
+.top .ttl span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.sync{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;white-space:nowrap}
+.sync i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:6px;vertical-align:1px}
+.sync.ok i{background:var(--done)}
+nav{overflow-x:auto;scrollbar-width:none;padding-block:4px 10px}
+nav::-webkit-scrollbar{display:none}
+.tabs{display:flex;gap:6px;width:max-content}
+.tab{border:1.5px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 10px;cursor:pointer;text-align:center;min-width:52px;line-height:1.15;text-decoration:none;color:inherit}
+.tab small{display:block;font-size:10px;letter-spacing:.1em;color:var(--muted);font-weight:600;text-transform:uppercase}
+.tab b{font-family:var(--display);font-weight:800;font-size:17px}
+.tab.sec{display:flex;align-items:center}
+.tab.sec b{font-size:14px;font-weight:700}
+.tab .bar{height:3px;border-radius:2px;background:var(--line);margin-top:4px;overflow:hidden}
+.tab .bar i{display:block;height:100%;background:var(--done)}
+.tab[aria-current="page"]{background:var(--y);border-color:var(--y);color:var(--on-y)}
+.tab[aria-current="page"] small{color:var(--on-y)}
+.tab.today:not([aria-current="page"]){border-color:var(--ink)}
+.sep{width:1px;background:var(--line);margin:4px}
+main{padding-block:20px 80px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1;letter-spacing:-.025em;margin:6px 0 10px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:800;font-size:21px;margin:28px 0 8px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h2 .hr{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.02em}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.lead{color:var(--muted);font-size:17px;max-width:62ch;margin:0 0 14px}
+.agenda{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden}
+.agenda div{padding:12px 14px;min-width:0}
+.agenda div+div{border-left:1.5px solid var(--ink)}
+.agenda .k{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;display:block;margin-bottom:2px}
+.agenda b{font-weight:700;font-size:17px;line-height:1.25}
+.goal{background:var(--y);color:var(--on-y);border-radius:14px;padding:14px 16px;margin-top:12px;font-size:16px;font-weight:500}
+.goal .eyebrow{color:var(--on-y);opacity:.75;display:block;margin-bottom:2px}
+.feeds{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.c{font-size:12.5px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--panel);border:1px solid var(--line);white-space:nowrap;cursor:pointer}
+.c.rt{background:var(--y);border-color:var(--y);color:var(--on-y)}
+.c.foto{background:transparent;border:1.5px solid var(--foto);color:var(--foto)}
+.c.on{outline:2px solid var(--ink);outline-offset:1px}
+.who{font-size:11px;font-weight:800;letter-spacing:.04em;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.who.F{background:var(--f);color:var(--on-f)}
+.who.H{background:var(--h);color:var(--on-h)}
+.who.E{background:var(--y);color:var(--on-y)}
+.bar2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 0}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:7px 12px;cursor:pointer;font-weight:600;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.prog{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.prog b{color:var(--ink)}
+.fnote{font-size:13px;color:var(--muted);margin-top:6px}
+.fnote button{border:0;background:none;text-decoration:underline;cursor:pointer;color:var(--ink);padding:0}
+.list{border-top:1.5px solid var(--ink)}
+.shot{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;padding:13px 0;border-bottom:1px solid var(--line)}
+.shot input{appearance:none;-webkit-appearance:none;width:28px;height:28px;border:2.5px solid var(--ink);border-radius:7px;margin:0;cursor:pointer;display:grid;place-content:center;background:var(--bg)}
+.shot input:checked{background:var(--done);border-color:var(--done)}
+.shot input:checked::after{content:"";width:12px;height:7px;border:3px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.shot .t{min-width:0;font-size:16.5px;font-weight:600}
+.shot .t small{display:block;color:var(--muted);font-size:14.5px;font-weight:400;margin-top:3px;line-height:1.45}
+.shot.done .t>span{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
+.shot.isfoto .t>span::before{content:"FOTO";font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--foto);border:1.5px solid var(--foto);border-radius:4px;padding:0 4px;margin-right:7px;vertical-align:2px}
+.shot .m{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:240px}
+.shot .d{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.empty{color:var(--muted);padding:14px 0}
+.shot .t small.ex{font-size:13.5px;color:var(--ink);font-weight:500;margin-top:4px}
+.shot .t small.ex b{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:2px 6px;border-radius:4px;margin-right:7px;vertical-align:1px}
+.shot .t small.ref{font-size:13px;font-style:italic;color:var(--muted);border-left:3px solid var(--y);padding-left:8px;margin-top:6px}
+.angles{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--panel);border-radius:12px;padding:10px 12px;margin:0 0 10px}
+.angles span{flex-basis:100%;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.angles i{font-style:normal;font-size:13px;font-weight:600;border:1.5px solid var(--ink);border-radius:20px;padding:2px 9px}
+.roles{padding-block:2px 6px}
+.roles .seg{display:flex;width:100%}
+.roles .seg button{flex:1;padding:9px 8px;font-size:14.5px}
+.shot .t small.para{font-family:var(--mono);font-size:12px;color:var(--ink);opacity:.85;margin-top:6px;letter-spacing:.01em}
+.shot .t small.para b{background:var(--y);color:var(--on-y);padding:1px 5px;border-radius:4px;font-weight:500;margin-right:4px;display:inline-block;margin-bottom:3px}
+.shot .t small.para i{font-style:normal;background:var(--panel);border:1px solid var(--line);padding:0 5px;border-radius:4px;margin-right:4px;display:inline-block;margin-bottom:3px}
+.count{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:14px}
+.count b{color:var(--ink)}
+.ed{background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 16px;margin-top:18px}
+.ed .eyebrow{color:var(--bg);opacity:.7;display:block;margin-bottom:4px}
+.eq{font-size:14.5px;color:var(--muted);margin-top:14px}
+.eq b{font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.1em;color:var(--ink);margin-right:6px}
+textarea{width:100%;min-height:96px;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--panel);color:var(--ink);resize:vertical}
+.saved{font-family:var(--mono);font-size:11px;color:var(--muted);min-height:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0;background:var(--bg)}
+.card h3{font-family:var(--display);font-weight:800;font-size:18px;margin:6px 0 4px}
+.card p{margin:0;font-size:15px;color:var(--muted)}
+.card .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.card.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card.dark p{color:var(--bg);opacity:.8}
+.meter{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:10px}
+.meter i{display:block;height:100%;background:var(--done)}
+.mtext{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px}
+.card button.link{border:0;background:none;padding:0;margin-top:8px;cursor:pointer;font-weight:700;font-size:14px;text-decoration:underline}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:700;padding:8px 6px;border-bottom:1.5px solid var(--ink)}
+td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td.mono,th.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.mx td,.mx th{text-align:center;padding:7px 4px}
+.mx td:first-child,.mx th:first-child{text-align:left;white-space:nowrap}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--ink)}
+.dot.l{background:transparent;border:2px solid var(--ink)}
+.dot.r{background:var(--y);border:2px solid var(--ink);width:17px;height:17px}
+.rt{display:grid;grid-template-columns:58px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rt .n{width:54px;height:54px;border-radius:50%;background:var(--y);color:var(--on-y);display:grid;place-content:center;font-family:var(--display);font-weight:800;font-size:15px}
+.rt h3{margin:0;font-family:var(--display);font-weight:800;font-size:19px}
+.rt p{margin:2px 0 8px;color:var(--muted);font-size:15px}
+.steps{display:flex;flex-wrap:wrap;gap:8px}
+.step{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;font-size:14px;cursor:pointer;background:var(--panel)}
+.step input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--ink);border-radius:5px;margin:0;display:grid;place-content:center;cursor:pointer;background:var(--bg)}
+.step input:checked{background:var(--done);border-color:var(--done)}
+.step input:checked::after{content:"";width:8px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg)}
+.tl{display:flex;flex-direction:column;margin-top:8px}
+.blk{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.blk .h{font-family:var(--mono);font-size:13px;font-weight:500}
+.blk p{margin:0;font-size:15px}
+.blk p small{display:block;color:var(--muted)}
+@media (max-width:560px){
+  .agenda{grid-template-columns:1fr}
+  .agenda div+div{border-left:0;border-top:1.5px solid var(--ink)}
+  .shot{grid-template-columns:32px 1fr}
+  .shot .m{grid-column:2;justify-content:flex-start;max-width:none}
+  .blk{grid-template-columns:1fr;gap:2px}
+}
+@media (prefers-reduced-motion:no-preference){.meter i,.tab .bar i{transition:width .3s ease}}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <svg viewBox="0 0 296.99 612.99" aria-hidden="true"><path fill="#F9E92D" d="M296.99 148.19 C296.99 230.03 230.51 296.37 148.50 296.37 C66.48 296.37 0.00 230.03 0.00 148.19 C0.00 66.35 66.48 0.00 148.50 0.00 C230.51 0.00 296.99 66.35 296.99 148.19"/><path fill="currentColor" fill-rule="evenodd" d="M225.45 525.75 L78.58 525.75 C77.91 525.75 77.23 525.74 76.60 525.52 C76.55 525.50 76.50 525.48 76.44 525.48 C63.96 524.21 53.16 514.72 51.31 503.97 C49.53 493.64 53.68 484.52 63.53 478.68 C76.61 470.93 89.63 463.10 102.68 455.31 C106.67 452.92 109.56 449.74 111.39 445.84 C116.84 434.21 111.66 419.96 99.34 412.74 C84.79 404.22 70.15 395.82 55.69 387.20 C51.49 384.69 47.42 381.85 43.87 378.67 C32.78 368.72 26.31 356.58 22.99 343.07 C21.43 336.71 20.96 330.33 23.00 324.00 C25.82 315.25 31.34 308.71 42.08 306.62 C42.74 306.48 43.39 306.31 44.06 306.31 L251.05 306.31 C251.61 306.31 252.17 306.38 252.72 306.53 C253.83 306.82 254.95 307.11 256.03 307.46 C264.25 310.16 269.23 315.59 271.90 322.66 C276.12 333.85 274.55 344.72 268.03 354.87 C261.23 365.47 251.39 371.40 236.71 371.08 C214.41 370.60 192.10 370.98 169.79 370.94 C165.44 370.93 162.10 372.40 159.83 375.62 C157.54 378.88 156.89 382.43 158.02 386.12 C158.99 389.32 161.14 391.64 164.79 392.99 C175.75 397.02 186.59 401.27 197.53 405.32 C205.88 408.42 214.30 411.36 222.70 414.36 C226.97 415.89 230.95 417.82 234.09 420.86 C237.19 423.85 238.56 427.30 237.80 431.35 C237.53 432.78 237.26 434.21 237.21 435.65 C236.99 443.33 232.45 448.69 225.20 452.33 C221.31 454.28 217.14 455.93 212.88 457.10 C198.14 461.16 183.36 465.13 168.47 468.76 C162.87 470.12 158.86 476.28 161.47 481.87 C163.31 485.80 166.79 487.74 172.17 487.75 C189.54 487.76 206.91 487.75 224.28 487.76 C225.56 487.76 226.84 487.76 228.12 487.85 C237.34 488.51 244.97 494.62 246.44 502.51 C248.09 511.32 242.85 519.92 233.33 523.73 C231.36 524.52 229.21 524.97 227.11 525.53 C226.57 525.67 226.01 525.75 225.45 525.75"/><path fill="currentColor" d="M188.32 535.25 L107.57 535.25 C86.10 535.25 68.70 552.65 68.70 574.12 C68.70 595.58 86.10 612.99 107.57 612.99 L188.32 612.99 C209.78 612.99 227.19 595.58 227.19 574.12 C227.19 552.65 209.78 535.25 188.32 535.25"/></svg>
+      <div class="ttl"><b>Rodaje Florianópolis</b><span>WhyNot · 29/11 – 07/12</span></div>
+      <div class="sync" id="sync"><i></i><span>Conectando…</span></div>
+    </div>
+    <div class="roles" id="roles"></div>
+    <nav aria-label="Días"><div class="tabs" id="tabs"></div></nav>
+  </div>
+</header>
+
+<main class="wrap" id="view" aria-live="polite"></main>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- PIEZAS (con etiquetas legibles) ---------- */
+var PIECES=[
+ {k:"P1",l:"Video general",n:"Video general de venta",d:"Hasta 4:30",s:"Arranca con drone al amanecer, recorre el viaje en orden (avión, hotel, playas, noches), tiene un bloque de testimonios con el micrófono de WhyNot y cierra con la emoción de la despedida. Sin locución: lo cuentan pasajeros y coordinadores.",r:"Video de venta Astros · Manifiesto Floripa El Festival"},
+ {k:"P2",l:"Comercial web",n:"Comercial para la web",d:"Hasta 0:30",s:"Solo las tomas más espectaculares del viaje, una tras otra, con un texto corto centrado, #justliveit y logo.",r:"Presentación WhyNot"},
+ {k:"C1",l:"Vlog · Hotelería",n:"Cápsula Hotelería",d:"Estilo vlog · 1:00–1:30",s:"Un día en el hotel contado con la hora en pantalla (09:00 desayuno → 22:30 previa). Habitaciones, pileta, playa, pasillos.",r:"Chill day · Floripa El Festival"},
+ {k:"C2",l:"Vlog · Gastronomía",n:"Cápsula Gastronomía",d:"Estilo vlog · 1:00–1:30",s:"Palabras gigantes a pantalla completa (DESAYUNO, ALMUERZO, BUFFET), detalles de platos y el buffet recorrido con estabilizador.",r:"Gastronomía · Floripa El Festival"},
+ {k:"C3",l:"Vlog · Actividades de día",n:"Cápsula Actividades de día",d:"Estilo vlog · 1:00–1:30",s:"Una placa de título por actividad (Agua Show, We Color, Ammo, P12, Joaquina). POV, drone y foto grupal.",r:"Nocturnas Astros (estructura)"},
+ {k:"C4",l:"Vlog · Actividades de noche",n:"Cápsula Actividades de noche",d:"Estilo vlog · 1:00–1:30",s:"Placa de título, corte muy rápido y color saturado. Una toma fuerte de cada fiesta.",r:"Nocturnas Astros"},
+ {k:"C5",l:"Comercial · Coordinación",n:"Cápsula Coordinación",d:"Estilo comercial · 1:00–1:30",s:"Coordinadores hablándole al grupo, entrega de kits, reunión de bienvenida y entrevistas con nombre y rol en pantalla.",r:"Crucero Astros15"},
+ {k:"C6",l:"Comercial · Seguridad",n:"Cápsula Control y Seguridad",d:"Estilo comercial · 1:00–1:30",s:"Ingresos ordenados, pulseras, conteo antes de subir al micro, servicio médico. Datos concretos en pantalla.",r:"Ninguna referencia lo muestra: nos diferencia"},
+ {k:"C7",l:"Comercial · Transporte",n:"Cápsula Transporte aéreo y terrestre",d:"Estilo comercial · 1:00–1:30",s:"Ala del avión, aeropuerto, valijas, micro con coordinador animando.",r:"Presentación WhyNot · Crucero Astros15"},
+ {k:"RT1",l:"Real-Time · Parque",n:"Real-Time Parque (Agua Show)",d:"Hasta 1:00",s:"Reacciones en los toboganes, POV, cámara lenta en el agua. Solo música.",r:"Barco pirata · Floripa El Festival",rt:1},
+ {k:"RT2",l:"Real-Time · Despedida",n:"Real-Time Fiesta de despedida (Gala)",d:"Hasta 1:00",s:"Previa de gala, llegada, pista, abrazos y retratos en cámara lenta, papelitos. Formato ancho con barras negras.",r:"Noche de gala · Floripa El Festival",rt:1},
+ {k:"RT3",l:"Real-Time · P12",n:"Real-Time Parador P12",d:"Hasta 1:00",s:"Drone rasante, cartel de P12 a contraluz, saltos a cámara, pileta llena desde el aire.",r:"Último P12 · Floripa El Festival",rt:1},
+ {k:"RT4",l:"Real-Time · Hotelería",n:"Real-Time Hotelería",d:"Hasta 1:00",s:"Versión corta del día en el hotel, con la hora en pantalla.",r:"Chill day · Floripa El Festival",rt:1},
+ {k:"RT5",l:"Real-Time · Día",n:"Real-Time Actividades de día",d:"Hasta 1:00",s:"Lo mejor de cada actividad de día del viaje.",r:"Presentación WhyNot",rt:1},
+ {k:"RT6",l:"Real-Time · Noche",n:"Real-Time Actividades de noche",d:"Hasta 1:00",s:"Una toma fuerte de cada fiesta del viaje.",r:"Bresh · Nocturnas Astros",rt:1},
+ {k:"FO",l:"Fotos",n:"Banco de fotos",d:"Entrega final",s:"Fotos editadas y organizadas por actividad: acción, grupos, retratos, detalles, instalaciones del hotel y comidas.",r:"Lo hace el híbrido",foto:1}
+];
+var PK={};PIECES.forEach(function(p){PK[p.k]=p});
+
+var BLOCKS={
+ man:{n:"Mañana",h:"09:00–12:00",x:"Opcional, solo si el grupo está en el hotel"},
+ act:{n:"Actividad",h:"desde 12:00"},
+ sun:{n:"Atardecer",h:"hora dorada"},
+ noc:{n:"Previa y fiesta",h:"hasta 04:00–05:00"},
+ cie:{n:"Cierre del rodaje",h:""}
+};
+function S(id,b,t,w,p,n){return {id:id,b:b,t:t,w:w,p:p,n:n||""}}
+
+/* ---------- DÍAS ---------- */
+var DAYS=[
+{id:"d29",wd:"Dom",dm:"29/11",date:"2026-11-29",dia:"Llegada, entrega de kits y reunión de bienvenida",noche:"Rota · Fiesta Vintage",
+ goal:"Primeras emociones del viaje: el avión, el aeropuerto, la llegada al hotel y la bienvenida de los coordinadores. Hoy arrancan Transporte, Hotelería y Coordinación.",
+ shots:[
+  S("d29-1","act","Ala del avión por la ventanilla","H",["C7","P1"],"Osmo apoyada en la ventanilla durante el descenso. Si se ve la isla o el mar, mejor. 15–20 segundos sin mover."),
+  S("d29-2","act","Salida del aeropuerto con las valijas","F",["C7","P1"],"Ir adelante del grupo caminando de espaldas con el Ronin: los chicos vienen hacia cámara con las valijas. Buscar a alguien que salude o grite de emoción."),
+  S("d29-3","act","Foto grupal de llegada al aeropuerto","H",["FO"],"Todo el grupo en la puerta del aeropuerto o junto al micro, con la bandera o el cartel de WhyNot si lo hay. Plano bien abierto."),
+  S("d29-4","act","Coordinador dando la bienvenida en el micro","F",["C7","C5"],"Desde el fondo del pasillo, plano abierto con el coordinador de pie adelante hablando. Después primeros planos de caras escuchando y reaccionando. Grabar su audio con el DJI Mic 2."),
+  S("d29-5","act","Primeras vistas de Floripa desde el micro","H",["C7","P1"],"Ace Pro o Osmo pegada al vidrio: playas, morros, el puente Hercílio Luz si aparece."),
+  S("d29-6","act","Llegada al hotel: bajada del micro y entrada al lobby","F",["C1","RT4"],"Esperar adentro del lobby con el Ronin y grabar cómo entran y miran todo. Anotar la hora real (ej. 15:40) porque Hotelería lleva la hora en pantalla."),
+  S("d29-7","act","Check-in y entrega de llaves","F",["C1","RT4"],"Detalle de la mano recibiendo la tarjeta o la llave, coordinadores repartiendo, risas. Planos cortos de 3–5 segundos."),
+  S("d29-8","act","Primera entrada a la habitación","H",["C1","RT4"],"Osmo en mano, la cámara entra a la habitación junto con los chicos al abrir la puerta. Reacción, salto en la cama, salida al balcón."),
+  S("d29-9","act","Fotos de habitaciones prolijas","H",["FO","C1"],"Antes de que se desarmen: cama, balcón, baño y vista. Fotos limpias para el banco y para Hotelería."),
+  S("d29-10","act","Entrega de kits","H",["C5","FO"],"Detalle del kit sobre la mesa, manos abriéndolo, chicos probándose la remera y mostrando lo que viene. Fotos de los chicos con el kit."),
+  S("d29-11","act","Reunión de bienvenida","F",["C5","C6"],"Plano general del salón con el grupo y los coordinadores al frente, y contraplano de caras atentas. Micrófono al que habla: las frases sobre cuidados y reglas sirven para Coordinación y Seguridad."),
+  S("d29-12","act","Foto del equipo de coordinadores","H",["FO","C5"],"Todos juntos con la ropa de staff, en un lugar lindo del hotel."),
+  S("d29-16","act","El grupo saliendo del aeropuerto, desde arriba con el stick","H",["C7","P1"],"Ace Pro 2 en el stick extendido por encima de las cabezas, caminando en el medio del grupo. Parece un drone bajo. Encuadrar para que el palo quede fuera o en el borde."),
+  S("d29-17","act","Timelapse del lobby durante el check-in","H",["C1","RT4"],"Ace Pro 2 fija en un rincón alto del lobby, en modo timelapse, 10–15 minutos: todos llegando, valijas, llaves. Después se retira para usarla en otra cosa."),
+  S("d29-18","act","Vlog de llegada grabado por un coordinador","H",["C7","C5","RT4"],"Darle la Osmo Pocket a un coordinador en el micro para que se grabe: «¡Chicos, llegamos a Floripa!». Recordarle: horizontal y tomas de 10–20 segundos. Recuperarla al llegar al hotel."),
+  S("d29-13","sun","Drone del hotel con la pileta y el mar","H",["C1","P1"],"Subida lenta desde la pileta hasta mostrar el hotel completo y el mar. Chequear antes la zona en DJI Fly. Si no se puede volar, toma desde el piso más alto."),
+  S("d29-14","noc","Previa de la Fiesta Vintage en el hotel","H",["C4","FO"],"Detalles del vestuario vintage: anteojos, camperas, peinados. Fotos de grupos de amigos en el lobby antes de salir."),
+  S("d29-15","noc","Rota: el lugar lleno y la pista","F",["C4","RT6"],"Cobertura liviana, unas 2 horas: plano general del lugar lleno y 3 o 4 tomas de baile y luces. Después descansar, mañana es día largo.")
+ ],
+ eq:"Filmmaker: A7 IV + Ronin + DJI Mic 2 · Híbrido: A7 IV + Osmo + drone · Noche: luz 60 W para detalles",
+ ed:"Nada para editar todavía. Mandarle 5 tomas de prueba para chequear color y formato."},
+
+{id:"d30",wd:"Lun",dm:"30/11",date:"2026-11-30",dia:"Parque acuático Agua Show",noche:"Previa + Milk · Fiesta Fluo",
+ goal:"Día del Real-Time del Parque: los dos van a Agua Show. A la mañana, si hay tiempo, desayuno para Gastronomía.",
+ shots:[
+  S("d30-1","man","Desayuno del hotel: detalles de comida","F",["C2"],"Planos cortos y cerrados en plano cerrado: café sirviéndose, frutas, panes, huevos. El buffet recorrido con el Ronin a la altura de las bandejas. Esto va con la palabra gigante DESAYUNO."),
+  S("d30-2","man","Chicos desayunando","H",["C2","RT4"],"Mesas llenas, risas, alguien con cara de dormido. Que no miren a cámara."),
+  S("d30-3","man","Fotos del desayuno","H",["FO","C2"],"Mesa armada desde arriba (cenital), platos, grupo brindando con jugo."),
+  S("d30-15","man","Timelapse del buffet","H",["C2"],"Ace Pro 2 fija arriba del buffet en modo timelapse, 10 minutos: la gente sirviéndose y la comida que se termina y se repone."),
+  S("d30-16","man","Timelapse cenital de una mesa","H",["C2","RT4"],"Ace Pro 2 en el stick, fija bien arriba de una mesa mirando hacia abajo: manos, platos y risas en movimiento rápido."),
+  S("d30-17","man","Vlog del desayuno grabado por un pasajero","H",["C2","RT4"],"Darle la Osmo Pocket a un pasajero: que muestre su plato y cuente qué eligió («mirá lo que hay»). 20–30 segundos, horizontal."),
+  S("d30-4","act","Micro camino a Agua Show","F",["C7","RT1"],"Coordinador animando, chicos cantando. Planos de 5–10 segundos."),
+  S("d30-5","act","Llegada a Agua Show: cartel y entrada","F",["RT1","C3"],"Plano del cartel de Agua Show con el grupo entrando en primer plano. Después las caras de emoción al ver los toboganes."),
+  S("d30-6","act","Toboganes: antes, durante y después","F",["RT1","C3","RT5"],"Tres tomas por tobogán: arriba esperando (nervios), bajando (desde abajo, en plano cerrado desde lejos) y la llegada al agua en cámara lenta (50p)."),
+  S("d30-7","act","POV bajando el tobogán","H",["RT1","RT5"],"Ace Pro 2 en el pecho con el arnés, o en la mano de un pasajero que se anime. Horizontal y con la estabilización al máximo."),
+  S("d30-8","act","Salpicones y saltos en cámara lenta","H",["RT1","P1"],"Desde el borde de la pileta, cámara baja casi al ras del agua. 50p para ralentizar."),
+  S("d30-9","act","Fotos de acción en Agua Show","H",["FO"],"Caras en el momento de caer al agua, amigos abrazados empapados. Ráfaga y velocidad alta (1/1000 o más)."),
+  S("d30-10","act","Foto grupal masiva en Agua Show","H",["FO","P1"],"Todo el grupo frente a la atracción principal o el cartel. Subirse a algo alto para que entren todos."),
+  S("d30-11","act","Testimonios en el parque","F",["RT1","P1"],"2 o 3 pasajeros todavía mojados, con el micrófono: ¿cuál fue el mejor tobogán? ¿Cómo viene el viaje? Respuestas cortas."),
+  S("d30-20","act","Drone de Agua Show","H",["RT1","P1"],"Si el parque lo permite: vista general con los toboganes y la gente. Pedir permiso en la entrada antes de volar."),
+  S("d30-18","act","El grupo en el agua desde arriba con el stick","H",["RT1","C3"],"Ace Pro 2 en el stick extendido sobre el grupo en la pileta o en la fila del tobogán. Es sumergible: puede entrar y salir del agua."),
+  S("d30-19","act","Vlog de un pasajero en Agua Show","H",["RT1","RT5"],"Darle la Osmo Pocket a un pasajero confiable: que cuente su tobogán favorito y grabe a sus amigos. Horizontal. La Osmo no es sumergible: lejos del agua. Recuperarla antes de salir."),
+  S("d30-12","noc","Previa de la Fiesta Fluo","H",["C4","FO"],"Chicos pintándose con pintura fluo en el hotel: manos y caras pintadas, grupos posando."),
+  S("d30-13","noc","Milk: ingreso con control","F",["C6"],"Fila ordenada, coordinadores controlando pulseras y listas. Plano general y detalle de manos con pulsera."),
+  S("d30-14","noc","Milk: la fiesta","F",["C4","RT6"],"Aprovechar las luces del boliche para que se vea la pintura fluo. Baile y manos arriba. Cobertura liviana.")
+ ],
+ eq:"Híbrido: Ace Pro 2 con arnés y bolsa estanca · Filmmaker: A7 IV en 50p para cámara lenta en los toboganes · Proteger todo del agua · Noche: no tenemos luz negra, se usan las luces del lugar",
+ ed:"Esta noche se arma la selección de Agua Show (40–60 tomas con la idea y el orden). Se envía al editor el 01/12 antes de las 12:00."},
+
+{id:"d01",wd:"Mar",dm:"01/12",date:"2026-12-01",dia:"We Color en la playa de Ingleses",noche:"Folha · Fiesta de Gala (despedida)",
+ goal:"Día del Real-Time de la Fiesta de despedida: la Gala se cubre completa. De día, We Color para el vlog de actividades y el comercial web.",
+ shots:[
+  S("d01-1","act","Playa de Ingleses: antes de pintarse","F",["C3","RT5"],"Bolsitas de colores, chicos con remeras blancas todavía limpias. Un plano de “antes” para contrastar con el “después”."),
+  S("d01-2","act","Explosión de colores en cámara lenta","F",["C3","P2","RT5"],"Cuenta regresiva y todos tiran los polvos a la vez: un plano abierto de frente y uno cerrado de caras. 50p. Cámara protegida con film."),
+  S("d01-3","act","Drone sobre la nube de colores","H",["P2","P1"],"Cenital o subida mientras explotan los colores. De las tomas más fuertes para el comercial web. Drone lejos del polvo."),
+  S("d01-4","act","Retratos pintados mirando a cámara","H",["P1","P2"],"Primeros planos: que miren al lente 2 o 3 segundos y sonrían. Cámara lenta."),
+  S("d01-5","act","Fotos de We Color","H",["FO"],"La explosión en ráfaga, grupos pintados, detalle de manos llenas de color."),
+  S("d01-13","act","Un pasajero con la Ace Pro 2 en el stick, en el medio de la explosión","H",["C3","RT5","P2"],"Elegir a un pasajero que esté en el centro del grupo: stick extendido hacia arriba apuntando a él y a sus amigos. Cuando explotan los colores queda la toma en primera persona, desde arriba, rodeado de color. Lavar la cámara después."),
+  S("d01-14","act","Otro pasajero con la Osmo: el antes y el después","H",["C3","RT5"],"Que se grabe con sus amigos antes de pintarse («así estamos») y después («así quedamos»). Osmo dentro de una bolsa transparente para protegerla del polvo."),
+  S("d01-6","noc","Previa de la Gala en el hotel","H",["RT2","C4"],"Vestidos, trajes, corbatas, maquillaje, ayudarse a acomodar la ropa. Detalles en plano cerrado. Es la apertura del Real-Time."),
+  S("d01-7","noc","Fotos producidas de la Gala","H",["FO"],"Retratos individuales y de grupos de amigos con un fondo prolijo del hotel. De las fotos que más piden los padres."),
+  S("d01-8","noc","Llegada a Folha e ingreso","F",["RT2","C6"],"Bajada del micro con la ropa de gala y el control de pulseras en la entrada."),
+  S("d01-9","noc","El salón lleno desde arriba","F",["RT2","RT6"],"Desde un lugar alto (escenario o barra), plano abierto con el escenario y la gente."),
+  S("d01-10","noc","Pista: DJ, humo y papelitos","F",["RT2","C4"],"Manos arriba al ritmo, papelitos cayendo en cámara lenta, el DJ de espaldas con el público de frente."),
+  S("d01-11","noc","Abrazos y emoción de despedida","H",["RT2","P1"],"Es la fiesta de despedida: buscar abrazos, llanto, grupos cantando juntos. Retratos en cámara lenta."),
+  S("d01-15","noc","Vlog de la previa de gala grabado por una pasajera","H",["RT2","C4"],"Darle la Osmo a una pasajera o coordinadora mientras se preparan: «nos estamos preparando para la gala». Horizontal."),
+  S("d01-17","noc","Timelapse del salón llenándose","F",["RT2","C4"],"Ace Pro 2 fija en un lugar alto apenas abren las puertas: el salón vacío que se llena. 10–15 minutos; después se la pasás al híbrido."),
+  S("d01-16","noc","Ronda de amigos desde arriba con el stick","H",["RT2","P1"],"Ace Pro 2 en el stick extendido sobre un círculo de amigos bailando o abrazándose. Cámara lenta si se puede."),
+  S("d01-12","noc","Fotos de la pista","H",["FO"],"Pista llena, grupos de amigos, abrazos. Flash rebotado o ISO alto sin cortar el clima.")
+ ],
+ eq:"We Color: film o funda en las cámaras, drone lejos de los polvos · Gala: luz 60 W para la previa, 50p para cámara lenta",
+ ed:"Antes de las 12:00: enviar la selección de Agua Show. Esta noche se arma la selección de la Gala."},
+
+{id:"d02",wd:"Mié",dm:"02/12",date:"2026-12-02",dia:"Ammo Beach",noche:"Sunset XXL · White Party",
+ goal:"El atardecer más lindo del viaje: drone y White Party para el video general, el comercial web y las noches.",
+ shots:[
+  S("d02-1","act","Llegada a Ammo Beach","F",["C3","RT5"],"Cartel o entrada del beach club, el grupo entrando y la primera vista al mar."),
+  S("d02-2","act","Drone de Ammo Beach con la gente","H",["P1","P2"],"Pasada lateral a lo largo de la playa y una subida que muestre el lugar lleno."),
+  S("d02-3","act","Juegos en el agua y en la arena","H",["C3"],"Vóley, carreras al agua, chapuzones. Planos cortos y alegres."),
+  S("d02-4","act","Testimonios en la playa","F",["P1"],"Con el mar de fondo: ¿qué es lo que más te gustó de Floripa? ¿Le recomendarías el viaje a tu hermano o hermana?"),
+  S("d02-5","act","Fotos en Ammo Beach","H",["FO"],"Grupos en la orilla, detalles (anteojos, pulseras, pies en la arena) y retratos con luz suave."),
+  S("d02-11","act","Mitad agua, mitad aire","H",["C3","RT5"],"Ace Pro 2 a la altura de la superficie del mar: que se vea la mitad de la imagen bajo el agua y la mitad arriba con la gente jugando."),
+  S("d02-12","act","El grupo caminando por la orilla, desde arriba con el stick","H",["C3","P1"],"Stick extendido, caminando adelante del grupo por la orilla. Como un drone bajo."),
+  S("d02-15","act","Vlog de un pasajero en Ammo Beach","H",["C3","RT5"],"Darle la Osmo a un pasajero para que cuente el día de playa y muestre el lugar. Horizontal, lejos del agua."),
+  S("d02-6","sun","Drone rasante al atardecer con todos de blanco","H",["P1","P2"],"Cuando baja el sol, vuelo bajo sobre el agua hacia la gente vestida de blanco. 4K 50p. Es la toma estrella del comercial web."),
+  S("d02-7","sun","Siluetas a contraluz","F",["P2","C4"],"Sol detrás de la gente y exposición para el cielo, así quedan siluetas negras. ISO 100, f/8–11."),
+  S("d02-8","sun","Fotos del atardecer","H",["FO"],"Siluetas, grupos abrazados mirando el sol, retratos con luz dorada."),
+  S("d02-13","sun","Timelapse del atardecer","F",["P1","C4"],"Ace Pro 2 fija en la arena apuntando al sol, 20–30 minutos mientras baja el sol y llega la gente de blanco."),
+  S("d02-14","noc","White Party desde arriba con el stick","H",["RT6","C4"],"Stick extendido en el medio del público con las linternas de los celulares en alto."),
+  S("d02-9","noc","White Party: escenario y público","F",["C4","RT6"],"Linternas de celulares en alto, papelitos, saltos al ritmo. Un plano general y varios cerrados."),
+  S("d02-10","noc","Retratos de blanco en cámara lenta","H",["RT6","FO"],"Con las luces de la fiesta de fondo, primeros planos bailando.")
+ ],
+ eq:"Sin filtros ND: ISO 100, f/8–11 y sol de frente para siluetas · Drone: baterías cargadas antes del atardecer",
+ ed:"Antes de las 12:00: enviar la selección de la Gala. Hoy no hay Real-Time nuevo."},
+
+{id:"d03",wd:"Jue",dm:"03/12",date:"2026-12-03",dia:"Parador P12 · Jurerê",noche:"Terrazas · Fiesta del Estudiante",
+ goal:"Día del Real-Time de P12, el lugar más fuerte del viaje para el comercial web. Mañana opcional para habitaciones y entrevistas a coordinadores.",
+ shots:[
+  S("d03-1","man","Habitaciones con luz de mañana","H",["C1","RT4"],"Balcón con vista, camas desde arriba (cenital), cortina abriéndose a la luz. Planos limpios y lentos."),
+  S("d03-2","man","Fotos de las instalaciones del hotel","H",["FO","C1"],"Pileta vacía, lobby, restaurante y vistas. Fotos limpias sin gente para el banco."),
+  S("d03-3","man","Entrevista a 2 coordinadores","F",["C5"],"Trípode, DJI Mic 2, a la sombra. Preguntas: ¿qué hacés en el viaje? ¿Cómo cuidan a los chicos? ¿Qué es lo que más te gusta de este trabajo? Anotar nombre y rol."),
+  S("d03-4","act","Llegada a P12: cartel a contraluz","F",["RT3"],"El cartel de P12 con el sol detrás y el grupo entrando en primer plano."),
+  S("d03-5","act","Drone rasante sobre la orilla de Jurerê","H",["RT3","P2"],"Vuelo bajo desde el mar hacia P12 que termina mostrando la pileta llena. Pedir permiso al lugar antes de volar."),
+  S("d03-6","act","Las olas desde arriba","H",["P1"],"Drone quieto mirando hacia abajo a la orilla con gente. 10 segundos."),
+  S("d03-7","act","El grupo saltando hacia cámara","F",["RT3","P2"],"Cámara baja, el grupo corre y salta hacia el lente. Cámara lenta. Repetir 2 o 3 veces."),
+  S("d03-8","act","Pileta y escenario de P12","F",["RT3","C3","RT5"],"Chapuzones, DJ o cantante, manos arriba en la pileta."),
+  S("d03-9","act","Retratos con anteojos y sombrero","H",["P1","FO"],"Primeros planos con el mar de fondo."),
+  S("d03-10","act","Testimonios en P12","F",["RT3"],"¿Qué se siente estar en P12? Respuestas cortas y con energía."),
+  S("d03-11","act","Fotos de P12","H",["FO"],"Pileta llena, grupos, detalles del lugar, gente bailando."),
+  S("d03-16","act","Timelapse de la pileta llenándose","F",["RT3","P1"],"Ace Pro 2 fija en un punto alto apenas llegan: la pileta de P12 vacía que se llena de gente. 10–15 minutos; después se la pasás al híbrido."),
+  S("d03-14","act","Salto a la pileta desde abajo del agua","H",["RT3","C3"],"Ace Pro 2 sumergida en la pileta mirando hacia arriba mientras alguien salta."),
+  S("d03-17","act","La pileta desde arriba con el stick","H",["RT3","P2"],"Stick extendido sobre el grupo en la pileta con las manos arriba."),
+  S("d03-15","act","Vlog «un día en P12» grabado por una pasajera","H",["RT3","RT5"],"Darle la Osmo a una pasajera: la entrada, la pileta, sus amigas. Horizontal y lejos del agua."),
+  S("d03-12","noc","Terrazas: una toma fuerte de la fiesta","F",["C4","RT6"],"Cobertura liviana: plano general y 3 o 4 tomas de pista."),
+  S("d03-13","noc","Vuelta de la fiesta: conteo y micro","H",["C6"],"Coordinadores contando a los chicos antes de subir al micro, fila ordenada. Clave para Seguridad.")
+ ],
+ eq:"Drone: zona en DJI Fly y permiso en P12 · Filmmaker: Ronin para las caminatas y 50p para los saltos",
+ ed:"Esta noche se arma la selección de P12. Se envía el 04/12 antes de las 12:00."},
+
+{id:"d04",wd:"Vie",dm:"04/12",date:"2026-12-04",dia:"Joaquina · almuerzo y sandboard",noche:"Jack London · Fiesta Carioca",
+ goal:"Las mejores tomas de día (las dunas) y una de las fiestas fuertes. Mucho material para Gastronomía y Actividades de día.",
+ shots:[
+  S("d04-1","act","Llegada a las dunas de Joaquina","F",["C3","RT5"],"Plano general de las dunas con el grupo subiendo y las tablas al hombro."),
+  S("d04-2","act","Sandboard en POV","H",["C3","RT5"],"Ace Pro 2 en el pecho de un pasajero o del híbrido bajando la duna."),
+  S("d04-3","act","Bajadas, caídas y risas en cámara lenta","F",["C3","RT5"],"Desde abajo de la duna, plano cerrado desde lejos, en 50p."),
+  S("d04-4","act","Drone de las dunas con el grupo","H",["P2","P1"],"Subida que muestre dunas y mar juntos. Atención al viento: vuelo bajo y corto."),
+  S("d04-5","act","Almuerzo en Joaquina","F",["C2"],"Platos llegando a la mesa, detalles, el grupo comiendo. Material para la palabra gigante ALMUERZO."),
+  S("d04-6","act","Foto grupal masiva en la duna","H",["FO","P1"],"Todos arriba de la duna con las tablas. Foto desde abajo o con el drone."),
+  S("d04-7","act","Fotos de sandboard","H",["FO"],"Acción en ráfaga, arena volando, caras."),
+  S("d04-12","act","Timelapse del grupo subiendo la duna","F",["C3","P1"],"Ace Pro 2 fija abajo de la duna en timelapse: la fila de gente subiendo con las tablas. Después se la pasás al híbrido."),
+  S("d04-11","act","Sandboard en tercera persona con el stick","H",["C3","RT5"],"El que baja sostiene la Ace Pro 2 en el stick extendido hacia adelante y arriba: se ve a sí mismo bajando la duna, como un drone pegado."),
+  S("d04-13","act","Vlog del almuerzo grabado por un pasajero","H",["C2"],"Darle la Osmo a un pasajero para que muestre qué pidió y cuente cómo está la comida. Horizontal."),
+  S("d04-8","noc","Previa de la Fiesta Carioca","H",["C4","FO"],"Detalles cariocas: brillos, plumas, colores. Grupos posando antes de salir."),
+  S("d04-9","noc","Jack London: ingreso con control","F",["C6"],"Segunda noche para Seguridad: pulseras, fila ordenada, coordinadores controlando."),
+  S("d04-14","noc","Fiesta Carioca desde arriba con el stick","H",["RT6","C4"],"Stick extendido en el centro de la pista."),
+  S("d04-10","noc","Jack London: baile y escenario","F",["C4","RT6"],"Una toma fuerte para el Real-Time de noche.")
+ ],
+ eq:"Arena: cambiar lentes lejos del viento y guardar todo en bolsa · Drone: viento fuerte en las dunas",
+ ed:"Antes de las 12:00: enviar la selección de P12."},
+
+{id:"d05",wd:"Sáb",dm:"05/12",date:"2026-12-05",dia:"Día de playa en el hotel",noche:"Indoor · Pijama Party",
+ goal:"Día del Real-Time de Hotelería y de las entrevistas. Es el día más tranquilo: se termina de grabar todo el hotel.",
+ shots:[
+  S("d05-1","man","Despertar en el hotel, con hora","F",["RT4","C1"],"09:00: cortinas abriéndose, alguien despertando a su amiga. Anotar la hora de cada toma."),
+  S("d05-2","man","Desayuno, con hora","F",["RT4","C2"],"Como el del 30/11 pero anotando la hora: 09:30 DESAYUNO."),
+  S("d05-3","man","Pasillos y habitaciones","H",["RT4","C1"],"Recorrida con el Ronin por el pasillo hasta la habitación y salida al balcón con vista."),
+  S("d05-11","man","Room tour de una pasajera","H",["RT4","C1"],"Darle la Osmo a una pasajera para que muestre su habitación como en un vlog: la cama, el baño, el balcón, la vista. Horizontal, 30–40 segundos."),
+  S("d05-4","act","Pileta y playa del hotel, con hora","F",["RT4","C1"],"Saltos a la pileta, reposeras, juegos en la arena, alguien con un jugo. Anotar la hora."),
+  S("d05-5","act","Drone del hotel desde el mar","H",["C1","P1"],"Toma de cierre de Hotelería: el hotel visto desde el mar."),
+  S("d05-6","act","Almuerzo en el hotel, con hora","F",["C2"],"Buffet y mesas llenas."),
+  S("d05-7","act","Entrevista al médico o responsable de seguridad","F",["C6"],"¿Qué cobertura médica hay? ¿Cómo se organiza el cuidado de noche? Pedir permiso. No mostrar pasajeros atendidos."),
+  S("d05-8","act","5 pasajeros: el mensaje para los que dudan","F",["P1"],"¿Qué le dirías a alguien que duda en viajar? Son las frases que cierran el video general."),
+  S("d05-9","act","Fotos del hotel con gente","H",["FO","C1"],"Pileta, reposeras, playa y lobby con grupos."),
+  S("d05-12","act","Timelapse de la pileta del hotel","F",["C1","RT4"],"Ace Pro 2 fija en un punto alto, 20 minutos: el sol que se mueve y la gente que entra y sale. Después se la pasás al híbrido."),
+  S("d05-13","act","Saltos a la pileta desde arriba y desde abajo del agua","H",["RT4","C1"],"Ace Pro 2 en el stick sobre la pileta y después sumergida mirando hacia arriba."),
+  S("d05-10","noc","Pijama Party: pijamas y una toma fuerte","H",["C4","RT6","FO"],"Pantuflas, pijamas temáticos, almohadas. Una toma fuerte de pista y fotos de grupos.")
+ ],
+ eq:"Entrevistas: trípode, DJI Mic 2 y luz 60 W, a la sombra · Anotar la hora de cada toma del hotel",
+ ed:"Esta noche se arma la selección de Hotelería (29/11 + 05/12, con la hora de cada toma). Se envía el 06/12 antes de las 12:00."},
+
+{id:"d06",wd:"Dom",dm:"06/12",date:"2026-12-06",dia:"Shopping · primeros regresos al aeropuerto",noche:"Floripa Club · Fiesta Vintage",
+ goal:"Despedidas en el aeropuerto y la última noche: llanto, abrazos y el cierre emocional del video general.",
+ shots:[
+  S("d06-1","act","Shopping","H",["C3"],"Bolsas, probadores, risas. Recorrida rápida, sin demorarse."),
+  S("d06-2","act","Valijas y micro al aeropuerto","F",["C7"],"Valijas en el lobby y la subida al micro."),
+  S("d06-3","act","Despedida en el aeropuerto","F",["C7","C5","P1"],"Abrazos con los coordinadores, últimos saludos y embarque. Plano general y caras."),
+  S("d06-4","act","Testimonio de cierre: el viaje en una palabra","F",["P1"],"Una sola palabra por persona, a cámara. Se editan en serie."),
+  S("d06-5","act","Fotos de despedida","H",["FO"],"Abrazos y el grupo con los coordinadores en el aeropuerto."),
+  S("d06-8","act","Abrazo grupal de despedida desde arriba con el stick","H",["P1","C5"],"Stick extendido sobre el abrazo grupal con los coordinadores en el aeropuerto."),
+  S("d06-9","act","Vlog de despedida grabado por un coordinador","H",["C7","P1"],"Darle la Osmo a un coordinador o pasajero: los saludos, las últimas palabras y el embarque."),
+  S("d06-6","noc","Floripa Club: emoción de cierre","H",["P1","RT6","FO"],"Llanto, abrazos, grupos cantando. Retratos en cámara lenta y fotos."),
+  S("d06-10","noc","Floripa Club desde arriba con el stick","H",["RT6","P1"],"Stick extendido en el centro de la pista en el momento más alto de la noche."),
+  S("d06-7","noc","Escenario y papelitos: la toma de cierre","F",["C4","RT6"],"El momento más alto de la noche para cerrar el Real-Time de noche.")
+ ],
+ eq:"Aeropuerto: equipo liviano, la Osmo alcanza para interiores · Noche: luz 60 W para detalles",
+ ed:"Antes de las 12:00: enviar la selección de Hotelería. Empezar a armar los Real-Time de Día y de Noche."},
+
+{id:"d07",wd:"Lun",dm:"07/12",date:"2026-12-07",dia:"Aeropuerto · regreso",noche:"—",
+ goal:"Cerrar Transporte, enviar los Real-Time de Día y de Noche y dejar todo respaldado por duplicado.",
+ shots:[
+  S("d07-1","act","Salida del hotel y último micro","F",["C7"],"El hotel quedando atrás desde la ventanilla del micro."),
+  S("d07-2","act","Embarque y despegue","H",["C7","P1"],"Osmo en la ventanilla al despegar: Floripa quedándose atrás."),
+  S("d07-3","act","Fotos finales del grupo y del staff","H",["FO"],"Última foto grupal antes de embarcar."),
+  S("d07-4","cie","Repasar las tomas de todo el viaje","F",[],"Ver la pestaña Todo el viaje y completar lo que falte."),
+  S("d07-5","cie","Real-Time de Día enviado","F",["RT5"],"We Color, Ammo, P12, Joaquina y Agua Show."),
+  S("d07-6","cie","Real-Time de Noche enviado","F",["RT6"],"Una toma fuerte de cada fiesta."),
+  S("d07-7","cie","Material completo en 2 discos, chequeado","FH",[],"Abrir algunos archivos de cada carpeta para confirmar que se copiaron bien."),
+  S("d07-8","cie","Selección inicial de fotos para el banco","H",["FO"],"Marcar las mejores de cada día.")
+ ],
+ eq:"Discos y lector a mano · Todo cargado para el viaje",
+ ed:"Después del viaje: del 08/12 al 11/12 organización · desde el 14/12 primeros cortes · entrega final del 11/01 al 15/01/2027."}
+];
+
+var ALLTRIP=[
+ S("tv-1","act","Coordinador hablándole al grupo en el micro","F",["C5","C7"],"En distintos viajes: anuncios, chistes, explicando la actividad. Siempre con el micrófono."),
+ S("tv-2","act","Conteo antes de salir a una actividad","F",["C5","C6"],"Coordinadores con la lista y el grupo ordenado."),
+ S("tv-3","act","Coordinadores con los chicos","H",["C5","FO"],"Risas, ayuda, fotos juntos. Que se note la cercanía."),
+ S("tv-4","act","Datos de seguridad para poner en pantalla","F",["C6"],"Pedirlos al cliente: coordinadores por pasajero, horario del médico, controles."),
+ S("tv-5","act","Detalles de comidas de cada día","F",["C2"],"Cena incluida: siempre algún plano de comida."),
+ S("tv-6","act","Fotos de comidas","H",["FO","C2"],"Platos y mesas de los distintos lugares."),
+ S("tv-7","act","Viajes en micro entre actividades","H",["C7"],"Ventanilla, cantos, chicos durmiendo a la vuelta."),
+ S("tv-8","act","Testimonios con el micrófono de WhyNot","F",["P1"],"Al menos 15 distintos en todo el viaje, de chicos y chicas, de distintos grupos."),
+ S("tv-9","act","Retratos en cámara lenta mirando a cámara","H",["P1","P2"],"3 o 4 por día, en 50p."),
+ S("tv-10","noc","Una toma fuerte de cada fiesta","F",["C4","RT6"],"Para el Real-Time de Noche y el vlog de noche."),
+ S("tv-11","act","Una toma fuerte de cada actividad de día","F",["C3","RT5"],"Para el Real-Time de Día y el vlog de día.")
+];
+
+var PEND=[
+ ["fi","Fiestas por noche","El cuadro y el texto del itinerario difieren en algunas noches. Esta guía usa el cuadro."],
+ ["vi","Nuestro vuelo","¿Salimos el 28/11 o el 29/11? ¿Volvemos el 06 o el 07?"],
+ ["ho","Hotel","Confirmar el nombre del hotel y si «Porto» es la empresa de micros."],
+ ["hs","Horarios","Hora de salida a cada actividad y de cada fiesta."],
+ ["dr","Drone","Permisos en P12, Joaquina y Ammo. Zonas cerca del aeropuerto."],
+ ["da","Datos de seguridad","Coordinadores por pasajero, servicio médico, controles."],
+ ["mi","Micrófono WhyNot","¿Lo da el cliente? Si no, un cubo con su logo para el DJI Mic 2."],
+ ["ap","Aprobación de los Real-Time","¿Quién aprueba y en cuánto tiempo responde?"],
+ ["co","Contactos","Coordinador de referencia y contacto del Depto. Creativo."]
+];
+
+var RTS=[
+ {k:"RT1",n:"Parque · Agua Show",g:"Se graba el 30/11",e:"Envío 01/12 antes de 12:00",x:"Toboganes, POV y cámara lenta en el agua."},
+ {k:"RT2",n:"Fiesta de despedida · Gala",g:"Se graba el 01/12",e:"Envío 02/12 antes de 12:00",x:"Folha: previa, pista, abrazos."},
+ {k:"RT3",n:"Parador P12",g:"Se graba el 03/12",e:"Envío 04/12 antes de 12:00",x:"Drone, cartel a contraluz, pileta llena."},
+ {k:"RT4",n:"Hotelería",g:"Del 29/11 al 05/12",e:"Envío 06/12 antes de 12:00",x:"Llegada, habitaciones, desayunos y el día de playa del hotel."},
+ {k:"RT5",n:"Actividades de día",g:"Todo el viaje",e:"Envío 07/12",x:"Agua Show, We Color, Ammo, P12 y Joaquina."},
+ {k:"RT6",n:"Actividades de noche",g:"Todo el viaje",e:"Envío 07/12",x:"Una toma fuerte de cada fiesta."}
+];
+var RTDAY={RT1:"d30",RT2:"d01",RT3:"d03",RT4:"d05",RT5:"d07",RT6:"d07"};
+
+/* Tipo de toma · equipo · referencia del cliente */
+function E(st,eq,ref){return {st:st,eq:eq,ref:ref||""}}
+var R={
+ pres:"Presentación WhyNot (video del cliente)",cru:"Crucero Astros15 (video del cliente)",aft:"Aftermovie crucero Astros15 (video del cliente)",
+ venta:"Video de venta Astros (video del cliente)",noct:"Actividades nocturnas Astros (video del cliente)",
+ gas:"Gastronomía · @floripaelfestival",man:"Manifiesto 25 años · @floripaelfestival",gala:"Noche de gala · @floripaelfestival",
+ chill:"Chill day · @floripaelfestival",vicio:"Noche VICIO · @floripaelfestival",barco:"Barco pirata · @floripaelfestival",
+ p12:"Último P12 · @floripaelfestival",key:"Noche KEY · @floripaelfestival",bresh:"Bresh · @floripaelfestival",of:"Perfil de OneFive"
+};
+var EX={
+ "d29-1":E("Vlog","Osmo Pocket apoyada en la ventanilla",R.pres+": abre con el ala del avión desde la ventanilla."),
+ "d29-2":E("Cinemática","A7 IV en el Ronin RS4",R.pres+": chico en el aeropuerto apuntando a cámara."),
+ "d29-3":E("Foto","A7 IV · plano abierto",R.of+": la foto grupal masiva fue de sus publicaciones con más likes."),
+ "d29-4":E("Comercial","A7 IV · DJI Mic 2 puesto en el coordinador",R.cru+": la coordinadora en el micro pregunta «¿cómo andan?» y pide un aplauso."),
+ "d29-5":E("Vlog","Ace Pro 2 u Osmo Pocket pegada al vidrio",R.aft+": vistas desde el bus."),
+ "d29-6":E("Vlog con hora","A7 IV en el Ronin RS4",R.chill+": la hora aparece abajo a la izquierda en cada toma."),
+ "d29-7":E("Detalle","A7 IV · plano cerrado",R.cru+": detalle del check-in con papeles y pulseras."),
+ "d29-8":E("Vlog POV","Osmo Pocket",R.pres+": interiores del hotel con movimiento."),
+ "d29-9":E("Foto","A7 IV · plano abierto, en trípode para que salgan derechas",""),
+ "d29-10":E("Detalle + foto","a6700 para video · A7 IV para fotos",R.cru+": detalle de la mochila y la carta de bienvenida."),
+ "d29-11":E("Comercial","A7 IV · DJI Mic 2 en quien habla",R.cru+": charla de la coordinadora al grupo con micrófono."),
+ "d29-12":E("Foto","A7 IV · plano abierto",R.man+": foto grupal del staff."),
+ "d29-13":E("Drone","DJI Mini 4 Pro",R.pres+": drone sobre el hotel con la pileta."),
+ "d29-14":E("Foto + detalle","A7 IV · luz 60 W",R.key+": detalles de vestuario y accesorios."),
+ "d29-15":E("Noche","A7 IV · plano cerrado",R.noct+": corte rápido y colores saturados."),
+ "d30-1":E("Detalle","A7 IV · plano cerrado · Ronin para recorrer el buffet",R.gas+": primer plano de comida y palabra gigante a pantalla completa (RESTAURANT, SUSHI)."),
+ "d30-2":E("Vlog","Osmo Pocket",R.gas+": chicas sirviéndose en el buffet."),
+ "d30-3":E("Foto","A7 IV · plano cenital",""),
+ "d30-4":E("Vlog","Osmo Pocket",R.cru+": coordinadora animando en el bus."),
+ "d30-5":E("Cinemática","A7 IV en el Ronin RS4",R.aft+": chicas saludando a cámara al llegar."),
+ "d30-6":E("Cinemática · cámara lenta","A7 IV · plano cerrado desde lejos, en 50p",R.pres+": juegos del parque y toboganes."),
+ "d30-7":E("POV","Insta360 Ace Pro 2 con pechera (arnés de pecho)",R.aft+": POV de las excursiones."),
+ "d30-8":E("Cámara lenta","Ace Pro 2 al ras del agua en 4K 50p",R.barco+": agua y pelo al viento en cámara lenta."),
+ "d30-9":E("Foto","A7 IV · plano cerrado, ráfaga a 1/1000 o más",""),
+ "d30-10":E("Foto","A7 IV · plano abierto",R.of+": foto grupal masiva frente al lugar icónico."),
+ "d30-11":E("Testimonio","A7 IV · DJI Mic 2 con el logo de WhyNot",R.venta+": entrevistas con el micrófono de la marca."),
+ "d30-12":E("Foto + vlog","A7 IV · Osmo Pocket",R.vicio+": retratos con colores saturados."),
+ "d30-13":E("Comercial","A7 IV",R.cru+": primer plano de manos con pulsera."),
+ "d30-14":E("Noche","A7 IV · plano muy abierto",R.noct+": pista, luces y corte rápido."),
+ "d01-1":E("Vlog","A7 IV en el Ronin RS4",""),
+ "d01-2":E("Cinemática · cámara lenta","A7 IV en 50p, con film protector",R.pres+": cámara lenta y transiciones con zoom."),
+ "d01-3":E("Drone","DJI Mini 4 Pro",R.man+": drone sobre la gente."),
+ "d01-4":E("Cámara lenta","A7 IV · primer plano, en 50p",R.man+": retratos en cámara lenta mirando a cámara."),
+ "d01-5":E("Foto","A7 IV · plano abierto, ráfaga",""),
+ "d01-6":E("Detalle","A7 IV · luz 60 W",R.cru+": grupo con vestidos en el salón."),
+ "d01-7":E("Foto","A7 IV · luz 60 W",""),
+ "d01-8":E("Comercial","A7 IV en el Ronin RS4",""),
+ "d01-9":E("Cinemática","A7 IV · plano muy abierto",R.gala+": gran angular del galpón con papelitos."),
+ "d01-10":E("Noche · cámara lenta","A7 IV · plano cerrado, en 50p",R.bresh+": papelitos y DJ con humo."),
+ "d01-11":E("Cámara lenta","A7 IV · primer plano, en 50p",R.gala+": abrazos con llanto en cámara lenta."),
+ "d01-12":E("Foto","A7 IV · plano abierto, ISO alto o flash rebotado",""),
+ "d02-1":E("Vlog","A7 IV en el Ronin RS4",""),
+ "d02-2":E("Drone","DJI Mini 4 Pro",R.p12+": drone del beach club con la gente."),
+ "d02-3":E("Vlog","Osmo Pocket · Ace Pro 2 en el agua",""),
+ "d02-4":E("Testimonio","A7 IV · DJI Mic 2 con logo",R.venta+": testimonios con el micrófono de la marca."),
+ "d02-5":E("Foto","A7 IV",""),
+ "d02-6":E("Drone","DJI Mini 4 Pro en 4K 50p",R.man+": vuelo rasante sobre el mar al atardecer."),
+ "d02-7":E("Cinemática","A7 IV · plano cerrado desde lejos",R.pres+": cierra con el atardecer en la playa."),
+ "d02-8":E("Foto","A7 IV",""),
+ "d02-9":E("Noche","A7 IV · plano muy abierto",R.bresh+": linternas de celulares y papelitos."),
+ "d02-10":E("Cámara lenta + foto","A7 IV · primer plano, en 50p",R.gala+": retratos en cámara lenta."),
+ "d03-1":E("Cinemática","Osmo Pocket",R.chill+": plano cenital de la cama."),
+ "d03-2":E("Foto","A7 IV · plano abierto, en trípode",""),
+ "d03-3":E("Entrevista","A7 IV en trípode, plano medio · DJI Mic 2 · luz 60 W",R.venta+": coordinadoras hablando a cámara."),
+ "d03-4":E("Cinemática","A7 IV",R.p12+": cartel «WELCOME P12» a contraluz."),
+ "d03-5":E("Drone","DJI Mini 4 Pro",R.p12+": vuelo rasante sobre la orilla."),
+ "d03-6":E("Drone","DJI Mini 4 Pro, cámara mirando hacia abajo",R.p12+": cenital de las olas."),
+ "d03-7":E("Cámara lenta","A7 IV a ras del piso, plano muy abierto, en 50p",R.p12+": grupo saltando hacia cámara."),
+ "d03-8":E("Cinemática","A7 IV en el Ronin RS4",R.p12+": splash en la pileta y cantante en el escenario."),
+ "d03-9":E("Foto + cámara lenta","A7 IV",R.p12+": retratos con sombrero."),
+ "d03-10":E("Testimonio","A7 IV · DJI Mic 2 con logo",""),
+ "d03-11":E("Foto","A7 IV · planos abiertos y retratos",""),
+ "d03-12":E("Noche","A7 IV · plano cerrado",""),
+ "d03-13":E("Comercial","Osmo Pocket",R.cru+": coordinadora en el bus de noche."),
+ "d04-1":E("Cinemática","A7 IV",""),
+ "d04-2":E("POV","Insta360 Ace Pro 2 con pechera",R.aft+": POV de las excursiones."),
+ "d04-3":E("Cámara lenta","A7 IV · plano cerrado desde lejos, en 50p",""),
+ "d04-4":E("Drone","DJI Mini 4 Pro",""),
+ "d04-5":E("Detalle","A7 IV · plano cerrado",R.gas+": parrilla, cocinero emplatando y palabra gigante."),
+ "d04-6":E("Foto","A7 IV o DJI Mini 4 Pro",R.of+": foto grupal masiva."),
+ "d04-7":E("Foto","A7 IV · plano cerrado, ráfaga a 1/2000",""),
+ "d04-8":E("Foto","A7 IV · luz 60 W",R.key+": detalles de vestuario."),
+ "d04-9":E("Comercial","A7 IV",""),
+ "d04-10":E("Noche","A7 IV · plano muy abierto",R.key+": alterna planos en blanco y negro y en color, con flashes."),
+ "d05-1":E("Vlog con hora","Osmo Pocket",R.chill+": notificación de chat sobre un plano cenital de la cama."),
+ "d05-2":E("Detalle con hora","A7 IV · plano cerrado",R.gas+": palabras gigantes a pantalla completa."),
+ "d05-3":E("Vlog","Osmo Pocket",R.chill+": balcón con vista a la pileta."),
+ "d05-4":E("Vlog con hora","A7 IV en el Ronin RS4",R.chill+": saltos a la pileta y reposeras."),
+ "d05-5":E("Drone","DJI Mini 4 Pro",R.pres+": drone sobre el hotel."),
+ "d05-6":E("Detalle","A7 IV · plano cerrado",R.gas+": buffet recorrido con estabilizador."),
+ "d05-7":E("Entrevista","A7 IV en trípode, plano medio · DJI Mic 2 · luz 60 W",""),
+ "d05-8":E("Testimonio","A7 IV · DJI Mic 2 con logo",R.venta+": collage de entrevistas al final."),
+ "d05-9":E("Foto","A7 IV · plano abierto",""),
+ "d05-10":E("Foto + noche","A7 IV · plano abierto",""),
+ "d06-1":E("Vlog","Osmo Pocket",R.of+": el día de shopping «no apto para padres»."),
+ "d06-2":E("Comercial","A7 IV en el Ronin RS4",""),
+ "d06-3":E("Cinemática","A7 IV · plano cerrado",R.cru+": despedida y charla de cierre."),
+ "d06-4":E("Testimonio","A7 IV · DJI Mic 2 con logo",R.venta+": cierre con testimonios."),
+ "d06-5":E("Foto","A7 IV",""),
+ "d06-6":E("Cámara lenta + foto","A7 IV · primer plano, en 50p",R.gala+": abrazos con llanto en cámara lenta."),
+ "d06-7":E("Noche","A7 IV · plano muy abierto",R.bresh+": papelitos y escenario."),
+ "d07-1":E("Vlog","Osmo Pocket",""),
+ "d07-2":E("Vlog","Osmo Pocket en la ventanilla",R.pres+": ala del avión."),
+ "d07-3":E("Foto","A7 IV · plano abierto",""),
+ "tv-1":E("Comercial","A7 IV · DJI Mic 2",R.cru+": la coordinadora hablándole al grupo en el bus."),
+ "tv-2":E("Comercial","A7 IV",""),
+ "tv-3":E("Foto + vlog","A7 IV · Osmo Pocket",""),
+ "tv-5":E("Detalle","A7 IV · plano cerrado",R.gas+": primeros planos de platos."),
+ "tv-6":E("Foto","A7 IV · plano cenital",""),
+ "tv-7":E("Vlog","Ace Pro 2 u Osmo Pocket",R.aft+": vistas y cantos en el bus."),
+ "tv-8":E("Testimonio","A7 IV · DJI Mic 2 con logo",R.venta+": entrevistas con micrófono de la marca."),
+ "tv-9":E("Cámara lenta","A7 IV · primer plano, en 50p",R.man+": retratos mirando a cámara."),
+ "tv-10":E("Noche","A7 IV",R.noct),
+ "tv-11":E("Vlog","A7 IV en el Ronin RS4",""),
+ "d29-16":E("Desde arriba","Ace Pro 2 en el stick extendido",""),
+ "d29-17":E("Timelapse","Ace Pro 2 fija en un rincón alto",R.chill+": el movimiento del hotel."),
+ "d29-18":E("Vlog de coordinador","Osmo Pocket en manos de un coordinador",R.cru+": la coordinadora grabándose en selfie al llegar."),
+ "d30-15":E("Timelapse","Ace Pro 2 fija arriba del buffet",R.gas+": el movimiento del buffet."),
+ "d30-16":E("Timelapse cenital","Ace Pro 2 en el stick, fija arriba de una mesa",""),
+ "d30-17":E("Vlog de pasajero","Osmo Pocket en manos de un pasajero",""),
+ "d30-18":E("Desde arriba","Ace Pro 2 en el stick extendido (sumergible)",R.barco+": chicas en el agua en cámara lenta."),
+ "d30-19":E("Vlog de pasajero","Osmo Pocket en manos de un pasajero",""),
+ "d30-20":E("Drone","DJI Mini 4 Pro",R.pres+": el parque visto desde el aire."),
+ "d01-13":E("Desde arriba · primera persona","Ace Pro 2 en el stick, en manos de un pasajero",""),
+ "d01-14":E("Vlog de pasajero","Osmo Pocket en una bolsa transparente",""),
+ "d01-15":E("Vlog de pasajero","Osmo Pocket en manos de una pasajera o coordinadora",R.cru+": selfies de las chicas preparándose."),
+ "d01-16":E("Desde arriba","Ace Pro 2 en el stick extendido",R.gala+": abrazos y papelitos."),
+ "d01-17":E("Timelapse","Ace Pro 2 fija en un lugar alto",""),
+ "d02-11":E("Mitad agua","Ace Pro 2 al ras del agua",""),
+ "d02-12":E("Desde arriba","Ace Pro 2 en el stick extendido",""),
+ "d02-13":E("Timelapse","Ace Pro 2 fija en la arena",R.pres+": cierra con el atardecer en la playa."),
+ "d02-14":E("Desde arriba","Ace Pro 2 en el stick extendido",R.bresh+": linternas de celulares."),
+ "d02-15":E("Vlog de pasajero","Osmo Pocket en manos de un pasajero",""),
+ "d03-14":E("Bajo el agua","Ace Pro 2 sumergida",R.p12+": splash en la pileta."),
+ "d03-15":E("Vlog de pasajero","Osmo Pocket en manos de una pasajera",""),
+ "d03-16":E("Timelapse","Ace Pro 2 fija en un punto alto",""),
+ "d03-17":E("Desde arriba","Ace Pro 2 en el stick extendido",R.p12+": la pileta llena con manos arriba."),
+ "d04-11":E("Tercera persona","Ace Pro 2 en el stick, en manos de quien baja",""),
+ "d04-12":E("Timelapse","Ace Pro 2 fija abajo de la duna",""),
+ "d04-13":E("Vlog de pasajero","Osmo Pocket en manos de un pasajero",""),
+ "d04-14":E("Desde arriba","Ace Pro 2 en el stick extendido",""),
+ "d05-11":E("Vlog de pasajero","Osmo Pocket en manos de una pasajera",R.chill+": recorrida por la habitación y el balcón."),
+ "d05-12":E("Timelapse","Ace Pro 2 fija en un punto alto",""),
+ "d05-13":E("Desde arriba y bajo el agua","Ace Pro 2 en el stick y sumergida",R.chill+": saltos a la pileta."),
+ "d06-8":E("Desde arriba","Ace Pro 2 en el stick extendido",""),
+ "d06-9":E("Vlog de coordinador","Osmo Pocket en manos de un coordinador o pasajero",R.cru+": la despedida de los coordinadores."),
+ "d06-10":E("Desde arriba","Ace Pro 2 en el stick extendido",R.gala+": el momento más alto de la noche.")
+};
+function devOf(x){if(!x)return null;var e=x.eq,st=x.st;
+  if(/Timelapse/.test(st))return "Timelapse";if(/^Foto/.test(st))return "Fotos";if(/manos de/.test(e)&&/Osmo/.test(e))return "Osmo en manos de un pasajero";
+  if(/stick/.test(e))return "Ace Pro 2 en el stick";if(/pechera/.test(e))return "Ace Pro 2 en el pecho";if(/sumergida|al ras del agua/.test(e))return "Ace Pro 2 en el agua";
+  if(/Mini 4 Pro/.test(e))return "Drone";if(/Osmo/.test(e))return "Osmo Pocket";if(/Ace Pro/.test(e))return "Ace Pro 2";if(/Mic 2/.test(e))return "Micrófono";if(/A7 IV|a6700/.test(e))return "Cámara principal";return null}
+function anglesOf(list){var o=[];list.forEach(function(s){var d=devOf(EX[s.id]);if(d&&o.indexOf(d)<0)o.push(d)});return o}
+var WHO={F:"Filmmaker",H:"Fotógrafo · Híbrido",E:"Editor"};
+
+var ALL=[];DAYS.forEach(function(d){d.feeds=[];d.shots.forEach(function(s){s.day=d;ALL.push(s);s.p.forEach(function(k){if(d.feeds.indexOf(k)<0)d.feeds.push(k)})})});
+ALLTRIP.forEach(function(s){s.day=null;ALL.push(s)});
+var ORDER=PIECES.map(function(p){return p.k});
+DAYS.forEach(function(d){d.feeds.sort(function(a,b){return ORDER.indexOf(a)-ORDER.indexOf(b)})});
+
+/* ---------- STATE / STORE ---------- */
+var checks={}, notes={}, db=null, LS="floripa-rodaje-v1";
+function lsGet(k,def){try{var v=localStorage.getItem(LS+":"+k);return v?JSON.parse(v):def}catch(e){return def}}
+function lsSet(k,v){try{localStorage.setItem(LS+":"+k,JSON.stringify(v))}catch(e){}}
+var ui=lsGet("ui",{who:"all"});if(["F","H","all"].indexOf(ui.who)<0)ui.who="all";
+var pieceFilter=null;
+function setSync(ok,msg){var el=document.getElementById("sync");el.className="sync"+(ok?" ok":"");el.lastChild.textContent=msg}
+function toggle(id,val){
+  checks[id]=val;
+  if(db){db.doc("checks/"+id).set({v:val,at:Date.now()}).catch(function(){setSync(false,"No se guardó el último cambio")})}
+  else lsSet("checks",checks);
+  render(true);
+}
+var noteTimers={};
+function saveNote(id,text){
+  notes[id]=text;clearTimeout(noteTimers[id]);
+  var st=document.getElementById("saved-"+id);if(st)st.textContent="Escribiendo…";
+  noteTimers[id]=setTimeout(function(){
+    function say(t){var s=document.getElementById("saved-"+id);if(s)s.textContent=t}
+    if(db){db.doc("notes/"+id).set({text:text,at:Date.now()}).then(function(){say("Guardado")}).catch(function(){say("No se pudo guardar")})}
+    else{lsSet("notes",notes);say("Guardado en este dispositivo")}
+  },700);
+}
+
+/* ---------- HELPERS ---------- */
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function paraLine(s){if(!s.p.length)return "";return '<small class="para">'+s.p.map(function(k){var p=PK[k];return p.rt?'<b>'+esc(p.l)+'</b>':'<i>'+esc(p.l)+'</i>'}).join("")+'</small>'}
+function exLine(s){var x=EX[s.id];if(!x)return "";return '<small class="ex"><b>'+esc(x.st)+'</b>'+esc(x.eq)+'</small>'}
+function refLine(s){var x=EX[s.id];if(!x||!x.ref)return "";return '<small class="ref">Referencia: '+esc(x.ref)+'</small>'}
+function whoTags(w){return w.split("").map(function(x){return '<span class="who '+x+'">'+WHO[x]+'</span>'}).join("")}
+function visible(s){return ui.who==="all"||s.w.indexOf(ui.who)>=0}
+function shotRow(s){
+  var on=!!checks[s.id];
+  return '<div class="shot'+(on?" done":"")+'"><input type="checkbox" id="ck-'+s.id+'" data-ck="'+s.id+'"'+(on?" checked":"")+' aria-label="'+esc(s.t)+'">'+
+   '<label class="t" for="ck-'+s.id+'"><span>'+esc(s.t)+'</span>'+exLine(s)+(s.n?'<small>'+esc(s.n)+'</small>':'')+refLine(s)+paraLine(s)+'</label>'+
+   '<div class="m">'+(ui.who==="all"?whoTags(s.w):'')+'</div></div>';
+}
+function prog(list){var t=list.length,d=list.filter(function(s){return checks[s.id]}).length;return {t:t,d:d,pct:t?Math.round(d*100/t):0}}
+function roleBar(){return '<div class="seg" role="group" aria-label="Elegí tu rol">'+[["F","Filmmaker"],["H","Fotógrafo · Híbrido"],["all","Todo el equipo"]].map(function(o){return '<button data-who="'+o[0]+'" aria-pressed="'+(ui.who===o[0])+'">'+o[1]+'</button>'}).join("")+'</div>'}
+function todayId(){var n=new Date();var iso=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0");var d=DAYS.filter(function(x){return x.date===iso})[0];return d?d.id:null}
+
+/* ---------- VIEWS ---------- */
+function viewDay(d){
+  var mine=d.shots.filter(visible),p=prog(mine),who=ui.who==="all"?"Todo el equipo":WHO[ui.who];
+  var h='<div class="eyebrow">Día '+(DAYS.indexOf(d)+1)+' de 9 · '+esc(who)+'</div><h1>'+d.wd+' '+d.dm+'</h1>'+
+  '<div class="agenda"><div><span class="k">DE DÍA · DESDE 12:00</span><b>'+esc(d.dia)+'</b></div><div><span class="k">DE NOCHE · HASTA LAS 04–05</span><b>'+esc(d.noche)+'</b></div></div>'+
+  '<div class="goal"><span class="eyebrow">Objetivo del día</span>'+esc(d.goal)+'</div>'+
+  '<div class="count"><b>'+p.d+'</b> de '+p.t+' tareas hechas'+(ui.who==="all"?'':' · tus tareas de hoy')+'</div>';
+  ["man","act","sun","noc","cie"].forEach(function(b){
+    var v=mine.filter(function(s){return s.b===b});if(!v.length)return;
+    var ang=anglesOf(d.shots.filter(function(s){return s.b===b}));
+    h+='<h2>'+BLOCKS[b].n+' <span class="hr">'+BLOCKS[b].h+(BLOCKS[b].x?' · '+BLOCKS[b].x:'')+'</span></h2>'+
+      (ang.length>2?'<div class="angles"><span>Ángulos de este momento (todo el equipo)</span>'+ang.map(function(a){return '<i>'+esc(a)+'</i>'}).join("")+'</div>':'')+
+      '<div class="list">'+v.map(shotRow).join("")+'</div>';
+  });
+  var tv=ALLTRIP.filter(visible);
+  if(tv.length&&d.id!=="d07")h+='<h2>Durante todo el viaje <span class="hr">CUANDO SURJA · SE TILDAN UNA SOLA VEZ</span></h2><div class="list">'+tv.map(shotRow).join("")+'</div>';
+  h+='<div class="eq"><b>EQUIPO</b>'+esc(d.eq)+'</div>'+
+   (ui.who!=="H"?'<div class="ed"><span class="eyebrow">Editor y Real-Time</span>'+esc(d.ed)+'</div>':'')+
+   '<h2>Notas del día</h2><textarea id="note-'+d.id+'" data-note="'+d.id+'" placeholder="Horarios reales, cambios, tomas que quedaron pendientes…">'+esc(notes[d.id]||"")+'</textarea><div class="saved" id="saved-'+d.id+'"></div>';
+  return h;
+}
+
+function viewPlan(){
+  var all=prog(ALL),t=todayId(),td=t?DAYS.filter(function(x){return x.id===t})[0]:null;
+  var h='<div class="eyebrow">Resumen</div><h1>Plan de rodaje</h1><p class="lead">Todo se graba en horizontal 16:9. Las actividades arrancan al mediodía y las fiestas terminan entre las 4 y las 5. Algunas mañanas se aprovechan para hotel, comida y entrevistas. Las fotos las hace el híbrido y aparecen marcadas con «FOTO» en cada día.</p>'+
+  '<div class="grid">'+
+   '<div class="card dark"><div class="eyebrow" style="color:inherit;opacity:.7">Avance total</div><h3>'+all.d+' de '+all.t+' tareas</h3><div class="meter"><i style="width:'+all.pct+'%"></i></div></div>'+
+   '<div class="card"><div class="eyebrow">Hoy</div><h3>'+(td?td.wd+" "+td.dm+" · "+esc(td.dia):"Rodaje del 29/11 al 07/12")+'</h3><p>'+(td?'<a href="#'+td.id+'">Abrir el día →</a>':'Elegí un día en la barra de arriba.')+'</p></div>'+
+  '</div>'+
+  '<h2>Un día tipo <span class="hr">SIN HORARIOS CONFIRMADOS</span></h2><div class="tl">'+
+   '<div class="blk"><div class="h">10:00–12:00</div><p>Antes de salir<small>Respaldo de la noche anterior y envío al editor. Algunos días: desayuno, habitaciones o entrevistas.</small></p></div>'+
+   '<div class="blk"><div class="h">12:00–18:00</div><p>Actividad del día<small>La pieza fuerte del día. Drone, POV y fotos de acción.</small></p></div>'+
+   '<div class="blk"><div class="h">Atardecer</div><p>Hora dorada<small>Drone rasante, siluetas, retratos.</small></p></div>'+
+   '<div class="blk"><div class="h">21:00–00:00</div><p>Previa e ingreso<small>Vestuario, detalles, fotos de grupos, control y pulseras.</small></p></div>'+
+   '<div class="blk"><div class="h">00:00–05:00</div><p>Fiesta<small>Cobertura completa solo en la Gala, la White Party, la Carioca y Floripa Club. En el resto, unas 2 horas y a descansar.</small></p></div>'+
+  '</div>'+
+  '<h2>Días</h2><div class="scroll"><table><tr><th class="mono">Día</th><th>De día</th><th>De noche</th><th class="mono">Avance</th></tr>'+
+  DAYS.map(function(d){var p=prog(d.shots);return '<tr><td class="mono"><a href="#'+d.id+'">'+d.wd+' '+d.dm+'</a></td><td>'+esc(d.dia)+'</td><td>'+esc(d.noche)+'</td><td class="mono">'+p.d+'/'+p.t+'</td></tr>'}).join("")+
+  '</table></div>'+
+  '<h2>Qué día alimenta a cada pieza <span class="hr">● MUCHO · ○ ALGO · AMARILLO = SE ENTREGA ESE REAL-TIME</span></h2><div class="scroll"><table class="mx"><tr><th>Pieza</th>'+DAYS.map(function(d){return '<th class="mono">'+d.dm.slice(0,2)+'</th>'}).join("")+'</tr>'+
+  PIECES.map(function(p){return '<tr><td>'+esc(p.l)+'</td>'+DAYS.map(function(d){
+    var n=d.shots.filter(function(s){return s.p.indexOf(p.k)>=0}).length;
+    return '<td>'+(RTDAY[p.k]===d.id?'<span class="dot r"></span>':n>=2?'<span class="dot"></span>':n===1?'<span class="dot l"></span>':'')+'</td>'}).join("")+'</tr>'}).join("")+
+  '</table></div>';
+  return h;
+}
+
+function viewPiezas(){
+  var h='<div class="eyebrow">16 entregables</div><h1>Piezas</h1><p class="lead">Las 15 piezas de video más el banco de fotos. El avance cuenta las tareas tildadas de cada una. Tocá «Ver tareas» para ver todo lo que alimenta a una pieza, día por día.</p><div class="grid">';
+  PIECES.forEach(function(p){
+    var l=ALL.filter(function(s){return s.p.indexOf(p.k)>=0}),pr=prog(l);
+    h+='<div class="card"><div class="row">'+chip(p.k)+'<span class="mtext">'+esc(p.d)+'</span></div><h3>'+esc(p.n)+'</h3><p>'+esc(p.s)+'</p><p style="margin-top:6px;font-size:13px">Referencia: '+esc(p.r)+'</p><div class="meter"><i style="width:'+pr.pct+'%"></i></div><div class="mtext">'+pr.d+' de '+pr.t+' tareas</div><button class="link" data-goto-piece="'+p.k+'">Ver tareas</button></div>';
+  });
+  return h+'</div>';
+}
+
+function viewPieza(k){
+  var p=PK[k],l=ALL.filter(function(s){return s.p.indexOf(k)>=0}),save=pieceFilter;pieceFilter=null;
+  var h='<div class="eyebrow">'+esc(p.l)+' · '+esc(p.d)+'</div><h1>'+esc(p.n)+'</h1><p class="lead">'+esc(p.s)+'</p>'+toolbar(l);
+  var groups=[];DAYS.forEach(function(d){var g=l.filter(function(s){return s.day===d});if(g.length)groups.push([d.wd+" "+d.dm+" · "+d.dia,g])});
+  var tv=l.filter(function(s){return !s.day});if(tv.length)groups.push(["Todo el viaje",tv]);
+  groups.forEach(function(g){var v=g[1].filter(visible);h+='<h2>'+esc(g[0])+'</h2><div class="list">'+(v.length?v.map(function(s){return shotRow(s)}).join(""):'<div class="empty">Nada con este filtro.</div>')+'</div>'});
+  pieceFilter=save;
+  return h+'<p style="margin-top:20px"><a href="#piezas">← Todas las piezas</a></p>';
+}
+
+function viewRT(){
+  var h='<div class="eyebrow">Entregas durante el viaje</div><h1>Real-Time</h1><p class="lead">Al editor va la selección (40–60 tomas, recortadas si se puede) en una carpeta con el nombre del Real-Time, más 2 o 3 líneas con la idea y el orden. Como las fiestas terminan tarde, se envía a la mañana siguiente, antes de salir.</p>';
+  RTS.forEach(function(r){
+    h+='<div class="rt"><div class="n">'+(RTS.indexOf(r)+1)+'</div><div><h3>'+esc(r.n)+'</h3><p>'+esc(r.x)+'<br><span class="mtext">'+esc(r.g)+' · '+esc(r.e)+'</span></p><div class="steps">'+
+     [["sel","Selección armada"],["env","Enviado al editor"],["cor","Corte recibido"],["apr","Aprobado por el cliente"]].map(function(st){var id="rt-"+r.k+"-"+st[0],on=!!checks[id];return '<label class="step"><input type="checkbox" data-ck="'+id+'"'+(on?" checked":"")+'>'+st[1]+'</label>'}).join("")+
+     '</div></div></div>';
+  });
+  return h;
+}
+
+function viewViaje(){
+  return '<div class="eyebrow">Sin día fijo</div><h1>Todo el viaje</h1><p class="lead">Se completan cuando aparece la oportunidad. Antes del 07/12 tienen que estar todas.</p>'+toolbar(ALLTRIP)+'<div class="list" style="margin-top:14px">'+(ALLTRIP.filter(visible).map(function(s){return shotRow(s)}).join("")||'<div class="empty">Nada con este filtro.</div>')+'</div>';
+}
+
+function viewEstilo(){
+  var c=[
+   ["De día","Color cálido y de cine. En hotel y comida, ritmo pausado: 3–4 cortes cada 10 segundos.",0],
+   ["De noche","Colores saturados: rojo, magenta, cian. Corte rápido: 6–8 cada 10 segundos.",1],
+   ["Reacciones antes que paisajes","En cada llegada (aeropuerto, Agua Show, P12, playa) grabar primero las caras. Es lo que mejor funciona en OneFive y Floripa El Festival.",0],
+   ["Retratos en cámara lenta","3 o 4 por día mirando a cámara, en 50p. Sirven para todas las piezas y para el cierre.",0],
+   ["Micrófono de WhyNot","Preguntas cortas: ¿de dónde son? ¿Qué fue lo mejor de hoy? Contale a tu mamá cómo está todo.",0],
+   ["Drone al atardecer","Rasante sobre el mar, beach club con la pileta llena, dunas de Joaquina.",0],
+   ["Hora en pantalla","Para el vlog de Hotelería: anotar la hora real de cada toma.",0],
+   ["Palabras gigantes","Para el vlog de Gastronomía: DESAYUNO · ALMUERZO · BUFFET a pantalla completa.",0],
+   ["Detalles","Pulsera, llave, kit, plato, pies en la arena, entrada a la fiesta. POV con la Ace Pro.",0],
+   ["Foto grupal masiva","Una por lugar icónico: aeropuerto, Agua Show, Joaquina, P12. Cierre ideal de las piezas.",0]
+  ];
+  return '<div class="eyebrow">Referencias del cliente, Floripa El Festival y OneFive</div><h1>Estilo y recursos</h1><div class="grid">'+
+   c.map(function(x){return '<div class="card'+(x[2]?" dark":"")+'"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>'}).join("")+'</div>'+
+   '<h2>Lo que no hacemos <span class="hr">FUERA DE LA PROPUESTA</span></h2><div class="list">'+
+   ["Voz en off o locución: la emoción la ponen los testimonios reales.","Animaciones complejas: textos en placas simples.","Escenas actuadas o con guion: todo es registro real.","Formato vertical: todo es 16:9."].map(function(t){return '<div class="shot" style="grid-template-columns:1fr"><div class="t" style="font-weight:400">'+esc(t)+'</div></div>'}).join("")+'</div>';
+}
+
+function viewRutina(){
+  function cl(id,t){var on=!!checks[id];return '<div class="shot'+(on?" done":"")+'"><input type="checkbox" id="ck-'+id+'" data-ck="'+id+'"'+(on?" checked":"")+'><label class="t" for="ck-'+id+'"><span>'+esc(t)+'</span></label><div></div></div>'}
+  return '<div class="eyebrow">Todos los días</div><h1>Rutina y seteo</h1><p class="lead">Una guía para repetir cada día: se puede tildar y destildar.</p>'+
+  '<h2>Antes de salir <span class="hr">10:00–12:00</span></h2><div class="list">'+cl("ru-1","Descargar todas las tarjetas de la noche anterior")+cl("ru-2","Copiar a los 2 discos")+cl("ru-3","Enviar al editor la selección que toque")+cl("ru-4","Baterías cargadas y tarjetas vacías")+cl("ru-5","Confirmar horarios con el coordinador")+cl("ru-6","Chequear el clima y la zona del drone")+'</div>'+
+  '<h2>Al volver de la fiesta</h2><div class="list">'+cl("ru-7","Todo a cargar: cámaras, drone, micrófonos, luz")+cl("ru-8","Tildar las tareas hechas y anotar pendientes en las notas del día")+'</div>'+
+  '<h2>Carpetas <span class="hr">IGUAL EN LOS 2 DISCOS</span></h2><div class="scroll"><table><tr><td class="mono">FLORIPA_2026/DIA01_2911/FILMMAKER_A7IV</td><td>También HIBRIDO_A7IV · HIBRIDO_A6700 · DRONE · ACE · OSMO · AUDIO · FOTOS</td></tr><tr><td class="mono">FLORIPA_2026/ENVIOS/01_PARQUE</td><td>Selección para el editor + un txt con la idea y el orden</td></tr></table></div>'+
+  '<h2>Seteo de cámara <span class="hr">TODO HORIZONTAL</span></h2><div class="scroll"><table>'+
+  [["Base","4K 25p · obturador 1/50 · XAVC HS 10-bit"],["Cámara lenta","4K 50p · 1/100 · se ralentiza en edición"],["Sol sin ND","ISO 100 · f/8–11 · mejor en hora dorada"],["Drone","4K 25p/50p · horizontal · zona chequeada en DJI Fly"],["Fotos","RAW + JPG · mismo balance de blancos en las dos cámaras · 1/1000 para acción"],["Audio","DJI Mic 2 grabando también interno, como respaldo"]].map(function(r){return '<tr><td><b>'+r[0]+'</b></td><td class="mono">'+esc(r[1])+'</td></tr>'}).join("")+'</table></div>'+
+  '<h2>Equipo y roles</h2><div class="grid">'+
+  '<div class="card"><div class="row"><h3>Filmmaker</h3></div><p>Dirección y contraparte del cliente y los coordinadores. Todo el video horizontal con A7 IV, Ronin y DJI Mic 2. Testimonios y entrevistas. Decide qué va al editor.</p></div>'+
+  '<div class="card"><div class="row"><h3>Fotógrafo · Híbrido</h3></div><p>Todo el banco de fotos con A7 IV y a6700. Además drone, Ace Pro 2 y Osmo: POV, vlog, aéreas y retratos en cámara lenta.</p></div>'+
+  '<div class="card"><div class="row"><h3>Editor</h3></div><p>A distancia. Monta cada Real-Time en 24/48 h y lo envía al cliente. Después edita las piezas finales.</p></div>'+
+  '<div class="card"><h3>Coordinadores WhyNot</h3><p>Avisan horarios, accesos y cambios. Pedir uno de referencia el primer día.</p></div></div>';
+}
+
+function viewPend(){
+  return '<div class="eyebrow">Con el itinerario definitivo</div><h1>A confirmar</h1><p class="lead">Tildá cada punto cuando esté resuelto y anotá la respuesta en las notas del día que corresponda.</p><div class="list">'+
+   PEND.map(function(p){var id="pe-"+p[0],on=!!checks[id];return '<div class="shot'+(on?" done":"")+'"><input type="checkbox" id="ck-'+id+'" data-ck="'+id+'"'+(on?" checked":"")+'><label class="t" for="ck-'+id+'"><span>'+esc(p[1])+'</span><small>'+esc(p[2])+'</small></label><div></div></div>'}).join("")+'</div>';
+}
+
+/* ---------- ROUTER / RENDER ---------- */
+function viewInfo(){
+  function sub(s){return s.replace(/<h1>/g,'<h2 style="font-size:28px;margin-top:44px">').replace(/<\/h1>/g,'</h2>')}
+  return '<div class="eyebrow">Para tener a mano</div><h1>Info del rodaje</h1><p class="lead">Todo se graba en horizontal 16:9. Las actividades arrancan al mediodía y las fiestas terminan entre las 4 y las 5. El trabajo de cada día está en su pestaña: elegí tu rol arriba.</p>'+
+  '<div class="scroll"><table><tr><th class="mono">Día</th><th>De día</th><th>De noche</th></tr>'+
+  DAYS.map(function(d){return '<tr><td class="mono"><a href="#'+d.id+'">'+d.wd+' '+d.dm+'</a></td><td>'+esc(d.dia)+'</td><td>'+esc(d.noche)+'</td></tr>'}).join("")+'</table></div>'+
+  '<h2 style="font-size:28px;margin-top:44px">Cámaras chicas y ángulos</h2><p class="lead">Cada actividad se cubre desde varios lugares a la vez: cámara principal, fotos, drone, Ace Pro 2 y Osmo Pocket. La Ace y la Osmo pueden quedar en manos de pasajeros o coordinadores.</p><div class="grid">'+
+   '<div class="card"><h3>Ace Pro 2 en el stick</h3><p>Stick extendido por encima de las cabezas: el grupo desde arriba, como un drone bajo. Sirve en la pista, la pileta y caminatas. Con la Ace el palo puede verse: encuadrar para dejarlo afuera o en el borde.</p></div>'+
+   '<div class="card"><h3>Ace Pro 2 en el pecho o en el agua</h3><p>Con la pechera, POV en toboganes y sandboard. Es sumergible: bajo el agua en la pileta o mitad agua y mitad aire en el mar.</p></div>'+
+   '<div class="card"><h3>Timelapse</h3><p>Ace Pro 2 fija en un lugar alto durante 10–20 minutos al llegar a cada lugar: el buffet, el salón llenándose, la pileta, el atardecer. Después se retira y pasa al híbrido.</p></div>'+
+   '<div class="card"><h3>Osmo Pocket en manos de alguien</h3><p>Un pasajero o coordinador se graba en modo vlog: el desayuno, su habitación, el antes y después de We Color, la previa de la gala. No es sumergible.</p></div>'+
+   '<div class="card dark"><h3>Si le das una cámara a alguien</h3><p>Elegí a alguien confiable (mejor un coordinador). Explicale 3 cosas: horizontal, tomas de 10–20 segundos, no tapar el lente. Correa en la muñeca. Recuperala al terminar la actividad y se descarga esa noche.</p></div>'+
+   '<div class="card"><h3>Una sola Ace Pro 2</h3><p>No se puede usar para dos cosas a la vez. Orden habitual: timelapse al llegar, después stick o pechera. Revisá en cada día quién la tiene.</p></div>'+
+  '</div>'+
+  sub(viewRT())+sub(viewRutina())+sub(viewEstilo())+sub(viewPend());
+}
+function current(){var h=(location.hash||"").slice(1);if(h!=="info"&&!DAYS.some(function(d){return d.id===h})){h=todayId()||"d29"}return h}
+function renderTabs(cur){
+  var t=todayId();
+  document.getElementById("roles").innerHTML=roleBar();
+  document.getElementById("tabs").innerHTML='<a class="tab sec" href="#info"'+(cur==="info"?' aria-current="page"':'')+'><b>Info</b></a><span class="sep"></span>'+
+   DAYS.map(function(d){var p=prog(d.shots.filter(visible));return '<a class="tab'+(d.id===t?" today":"")+'" href="#'+d.id+'"'+(cur===d.id?' aria-current="page"':'')+'><small>'+d.wd+'</small><b>'+d.dm.slice(0,2)+'</b><div class="bar"><i style="width:'+p.pct+'%"></i></div></a>'}).join("");
+}
+function render(mode){
+  var cur=current(),v=document.getElementById("view"),y=window.scrollY;
+  var ta=document.activeElement&&document.activeElement.tagName==="TEXTAREA";
+  if(ta&&mode==="remote")return;
+  renderTabs(cur);
+  var d=DAYS.filter(function(x){return x.id===cur})[0];
+  v.innerHTML=d?viewDay(d):viewInfo();
+  if(mode)window.scrollTo(0,y);
+  else{var act=document.querySelector('.tab[aria-current="page"]');if(act)act.scrollIntoView({block:"nearest",inline:"center"})}
+}
+window.addEventListener("hashchange",function(){render(false);window.scrollTo(0,0)});
+document.addEventListener("change",function(e){var id=e.target.getAttribute&&e.target.getAttribute("data-ck");if(id)toggle(id,e.target.checked)});
+document.addEventListener("input",function(e){var id=e.target.getAttribute&&e.target.getAttribute("data-note");if(id)saveNote(id,e.target.value)});
+document.addEventListener("click",function(e){
+  var t=e.target.closest&&e.target.closest("[data-who]");if(!t)return;
+  ui.who=t.getAttribute("data-who");lsSet("ui",ui);render(true);
+});
+
+/* ---------- BOOT ---------- */
+checks=lsGet("checks",{});notes=lsGet("notes",{});
+setSync(false,"Solo en este dispositivo");
+render(false);
+if(window.claude&&window.claude.use){
+  window.claude.use("db").then(function(d){
+    if(!d){setSync(false,"Solo en este dispositivo");return}
+    db=d;setSync(false,"Conectando…");
+    var timer=setTimeout(function(){setSync(false,"Sin conexión: puede estar desactualizado")},10000);
+    var gotC=false,gotN=false;
+    function ready(){if(gotC&&gotN){clearTimeout(timer);setSync(true,"Compartido en vivo")}}
+    db.collection("checks").onSnapshot(function(snap){
+      var c={};snap.docs.forEach(function(doc){var x=doc.data();if(x&&x.v)c[doc.id]=true});checks=c;
+      if(!snap.metadata.fromCache){gotC=true;ready()}
+      render("remote");
+    },function(){clearTimeout(timer);setSync(false,"Sin sincronizar")});
+    db.collection("notes").onSnapshot(function(snap){
+      snap.docs.forEach(function(doc){var x=doc.data();var el=document.getElementById("note-"+doc.id);if(!(el&&document.activeElement===el)){notes[doc.id]=(x&&x.text)||""}});
+      if(!snap.metadata.fromCache){gotN=true;ready()}
+      render("remote");
+    },function(){});
+  }).catch(function(){setSync(false,"Solo en este dispositivo")});
+}
+})();
+</script>
+
+</body>
+</html>
